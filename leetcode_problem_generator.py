@@ -6,8 +6,7 @@ import requests
 from html.parser import HTMLParser
 
 from generators import GENERATOR_MAP
-from generators.testcase_generator import generate_testcase_comment, generate_github_push_comment
-
+from generators.utils import TestCaseGenerator, SourceControlGenerator
 
 class HTMLFilter(HTMLParser):
     """Remove HTML tags from description."""
@@ -311,7 +310,7 @@ def fetch_leetcode_problem(problem_slug, preferred_language='python'):
                     if len(parts) >= 2:
                         params.append(parts[-1])
     elif preferred_language.lower() == 'cpp':
-        func_match = re.search(r'(\w+(?:<[^>]+>)?)\s+(\w+)\s*\(([^)]*)\)', target_code)
+        func_match = re.search(r'(\w+(?:<[^>]+>)?)\s*\*?\s+(\w+)\s*\(([^)]*)\)', target_code)
         if func_match:
             function_name = func_match.group(2)
             param_text = func_match.group(3).strip()
@@ -407,11 +406,11 @@ def create_files(data):
     code_content = generator(data, indent)
     
     # Generate additional test cases comment
-    testcase_comment = generate_testcase_comment(data, data['description'])
+    testcase_comment = TestCaseGenerator.generate_testcase_comment(data, data['description'])
     code_content += testcase_comment
     
     # Generate GitHub push comment template
-    github_comment = generate_github_push_comment(data)
+    github_comment = SourceControlGenerator.generate_github_push_comment(data)
     code_content += github_comment
 
     with open(code_path, 'w', encoding='utf-8') as handle:
