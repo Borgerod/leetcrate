@@ -283,7 +283,7 @@ def fetch_leetcode_problem(problem_slug, preferred_language='python'):
     params = []
 
     if preferred_language.lower() == 'python':
-        func_match = re.search(r'def\s+(\w+)\s*\(self(?:,\s*(.+?))?\)\s*->', target_code, re.DOTALL)
+        func_match = re.search(r'def\s+(?!__init__)(\w+)\s*\(self(?:,\s*(.+?))?\)\s*->', target_code, re.DOTALL)
         if func_match:
             function_name = func_match.group(1)
             if func_match.group(2):
