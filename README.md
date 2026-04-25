@@ -12,6 +12,7 @@ language-specific boilerplate solution files with runnable test harnesses.
   - [Overview](#overview)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+    - [From PyPI](#from-pypi)
     - [From source (editable install)](#from-source-editable-install)
     - [Verify](#verify)
   - [Configuration](#configuration)
@@ -48,6 +49,12 @@ language-specific boilerplate solution files with runnable test harnesses.
 ---
 
 ## Installation
+
+### From PyPI
+
+```powershell
+pip install leetcrate
+```
 
 ### From source (editable install)
 
@@ -239,13 +246,14 @@ Runtime requirements per language:
 
 ## Troubleshooting
 
-| Issue                                     | Fix                                                                            |
-| ----------------------------------------- | ------------------------------------------------------------------------------ |
-| `No settings.INI found`                   | Run `leetcrate init` first                                                     |
-| `Warning: Could not read settings.INI`    | Ensure the file is UTF-8 encoded and contains a valid `language = value` line  |
-| Locked problem fetch fails                | Log in to LeetCode in a browser first, or avoid locked problems                |
-| Wrong types in test harness               | Check your `language` value in `settings.INI` matches the file you want to run |
-| Need to re-generate after language change | Delete the folder and run `leetcrate generate <slug>` again                    |
+| Issue                                     | Fix                                                                                     |
+| ----------------------------------------- | --------------------------------------------------------------------------------------- |
+| `No settings.INI found`                   | Run `leetcrate init` first                                                              |
+| `Warning: Could not read settings.INI`    | Ensure the file is UTF-8 encoded and contains a valid `language = value` line           |
+| Locked problem fetch fails                | Log in to LeetCode in a browser first, or avoid locked problems                         |
+| Wrong types in test harness               | Check your `language` value in `settings.INI` matches the file you want to run          |
+| Need to re-generate after language change | Delete the folder and run `leetcrate generate <slug>` again                             |
+| `leetcrate` not recognized after install  | Run cmd as Administrator, then `pip uninstall leetcrate -y` and `pip install leetcrate` |
 
 ## TODO:
 
@@ -262,7 +270,7 @@ Runtime requirements per language:
   - [x] Update script: Java
   - [x] Update script: JavaScript
   - [x] Update script: Go
-- [ ] Add docs to python components
+- [x] Add docs to python components
 - [x] Turn project into package
   - [x] Add package directory structure (src/ if needed)
   - [x] Ensure all modules have **init**.py
@@ -272,11 +280,11 @@ Runtime requirements per language:
   - [x] Add README.md with usage
   - [x] Add LICENSE file
   - [ ] Add MANIFEST.in if needed
-  - [ ] Test local install (pip install -e .)
-  - [ ] Verify import/usage from clean env
+  - [x] Test local install (pip install -e .)
+  - [x] Verify import/usage from clean env
 
   [_OPTIONAL_]
   - [ ] (Optional) Add setup.cfg/setup.py
   - [x] (Optional) Add tests/ directory
   - [ ] (Optional) Set up CI
-  - [ ] (Optional) Publish to PyPI
+  - [x] (Optional) Publish to PyPI
