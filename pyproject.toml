@@ -1,0 +1,46 @@
+[project]
+name = "leetcode_organizer_and_generator"
+version = "0.2.1"
+description = "A tool to organize and generate LeetCode problems and solutions."
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+authors = [
+  { name = "Aleksander Borgerød", email = "aborgerod@gmail.com" }
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+
+[tool.setuptools]
+packages = ["generators", "problems"]
+package-dir = {"generators" = "generators", "problems" = "problems"}
+
+[project.urls]
+Homepage = "https://github.com/Borgerod/leetcode_organizer_and_generator"
+Issues = "https://github.com/Borgerod/leetcode_organizer_and_generator/issues"
+AuthorHomePage = "https://your.documentation.url"
+Source = "https://github.com/Borgerod/leetcode_organizer_and_generator"
+[tool.bumpver]
+current_version = "2026.1001-alpha"
+version_pattern = "YYYY.BUILD[-TAG]"
+commit_message = "bump version {old_version} -> {new_version}"
+tag_message = "{new_version}"
+tag_scope = "default"
+pre_commit_hook = ""
+post_commit_hook = ""
+commit = true
+tag = true
+push = true
+
+[tool.bumpver.file_patterns]
+"pyproject.toml" = [
+    'current_version = "{version}"',
+]
+"README.md" = [
+    "{version}",
+    "{pep440_version}",
+]
+
