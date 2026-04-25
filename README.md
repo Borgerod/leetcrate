@@ -4,25 +4,59 @@ Utility scripts for downloading LeetCode problem statements and scaffolding lang
 
 ## TODO:
 
--           [x] Make generator for extra testcases
--           [x] Make generator for git push description.
+- [x] Make generator for extra testcases
+  - [ ] Fix broken testcase generator
+- [x] Make generator for git push description.
+- [ ] crate tests/run_test.py - will run the 4 generates files (according to set language in settings.ini) (NOTE: this is a dev tool).
+  - [ ] install c++, java, javascript and go in /.venv, so dev can run the codes locally and not rely on online compilers while building.
+- [x] crate tests/generator_test.py - will generates cases for set language (settings.ini) for the leetcode projects set in generator_test (NOTE: this is a dev tool).
+- [ ]
+- [ ] Update v0.2.0 - descr: <br>
+      _add clause for handling nodes, add Adjusted test runner(iterates over (vals, pos) pairs for linked list problems), dynamic type notations, add dynamic comments._
+  - [x] Update script: Python
+  - [x] Update script: C++
+  - [x] Update script: Java
+  - [x] Update script: JavaScript
+  - [x] Update script: Go
+- [ ] Add docs to python components
+- [ ] Turn project into package
+  - [ ] Add package directory structure (src/ if needed)
+  - [ ] Ensure all modules have **init**.py
+  - [ ] Update pyproject.toml with metadata
+  - [ ] Specify dependencies in pyproject.toml
+  - [ ] Add classifiers and license info
+  - [ ] Add README.md with usage
+  - [ ] Add LICENSE file
+  - [ ] Add MANIFEST.in if needed
+  - [ ] Test local install (pip install -e .)
+  - [ ] Verify import/usage from clean env
+
+  [_OPTIONAL_]
+  - [ ] (Optional) Add setup.cfg/setup.py
+  - [ ] (Optional) Add tests/ directory
+  - [ ] (Optional) Set up CI
+  - [ ] (Optional) Publish to PyPI
 
 ## Overview
 
--   Fetch problem metadata via LeetCode's GraphQL API
--   Generate boilerplate solutions in five languages: Python, JavaScript, Go, Java, and C++
--   Populate working test harnesses for every supported language
--   Organize output inside `problems/` under `completed/` and `incomplete/`
+- Fetch problem metadata via LeetCode's GraphQL API
+- Generate boilerplate solutions in five languages: Python, JavaScript, Go, Java, and C++
+- Populate working test harnesses for every supported language
+- Organize output inside `problems/` under `completed/` and `incomplete/`
 
 This tutorial walks through setup, configuration, and daily usage.
+
+Linked list detection — uncomments the # class ListNode: block and adds a build_linked_list helper.
+Adjusted test runner — iterates over (vals, pos) pairs for linked list problems.
+adjusted type notations + import from typing if needed.
 
 ## 1. Prerequisites
 
 1. **Python 3.10+** installed and available on your PATH
 2. **Pip packages**: `requests` and `beautifulsoup4`
-    ```powershell
-    pip install requests beautifulsoup4
-    ```
+   ```powershell
+   pip install requests beautifulsoup4
+   ```
 3. **LeetCode account** (anonymous access works for free problems, but Locked problems require an authenticated account)
 
 ## 2. Configure Your Preferred Language
@@ -77,22 +111,22 @@ problems/
 
 All languages follow the same pattern:
 
--   **Description files** capture the formatted question text
--   **Solution files** contain a stub inside the main function/class plus a test loop that exercises the example cases
+- **Description files** capture the formatted question text
+- **Solution files** contain a stub inside the main function/class plus a test loop that exercises the example cases
 
 ## 5. Working With the Generated Files
 
--   **Implement the solution** inside the generated function/method
--   **Run the bundled tests** (each language’s main/test harness echoes inputs and outputs)
--   **Move solved problems** to `problems/completed/` to track progress
+- **Implement the solution** inside the generated function/method
+- **Run the bundled tests** (each language’s main/test harness echoes inputs and outputs)
+- **Move solved problems** to `problems/completed/` to track progress
 
 ### Language Notes
 
--   **Python**: Uses `if __name__ == "__main__"` with simple loops over inputs
--   **JavaScript**: Logs each case with `console.log`
--   **Go**: Generates strongly typed slices and asserts parameter types
--   **Java**: Builds `Object[][]` arrays, casts to the expected parameter types, and prints using `Arrays.toString`
--   **C++**: Stores cases in `std::vector<std::pair<...>>` and prints via helper loops
+- **Python**: Uses `if __name__ == "__main__"` with simple loops over inputs
+- **JavaScript**: Logs each case with `console.log`
+- **Go**: Generates strongly typed slices and asserts parameter types
+- **Java**: Builds `Object[][]` arrays, casts to the expected parameter types, and prints using `Arrays.toString`
+- **C++**: Stores cases in `std::vector<std::pair<...>>` and prints via helper loops
 
 ## 6. Troubleshooting
 
@@ -105,9 +139,9 @@ All languages follow the same pattern:
 
 ## 7. Contributing & Customization
 
--   Add new language generators by following the existing patterns in `leetcode_problem_generator.py`
--   Extend the test harness logic or post-processing as desired (e.g., auto-formatting, linting)
--   Pull requests welcome for additional features or bug fixes
+- Add new language generators by following the existing patterns in `leetcode_problem_generator.py`
+- Extend the test harness logic or post-processing as desired (e.g., auto-formatting, linting)
+- Pull requests welcome for additional features or bug fixes
 
 ---
 

@@ -1,3 +1,5 @@
+# version for runtime access
+__version__ = "0.2.0"
 from .python_generator import generate_boilerplate as generate_python
 from .java_generator import generate_boilerplate as generate_java
 from .javascript_generator import generate_boilerplate as generate_javascript

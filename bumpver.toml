@@ -1,0 +1,28 @@
+[bumpver]
+current_version = "0.2.0"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit = false
+tag = false
+
+[bumpver.file_patterns]
+"pyproject.toml" = [
+	'version = "{version}"'
+]
+"generators/__init__.py" = [
+	'__version__ = "{version}"'
+]
+"__init__.py" = [
+	'__version__ = "{version}"'
+]
+
+
+# usage:
+
+# 0.x.0:
+# bumpver update --patch
+
+# 0.0.x:
+# bumpver update --minor
+
+# x.0.0:
+# bumpver update --major
