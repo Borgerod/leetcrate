@@ -1,3 +1,14 @@
+"""java_generator.py
+
+Generates a Java boilerplate solution file for a LeetCode problem.
+
+Handles:
+- ListNode uncomment + buildLinkedList / listNodeToString helpers
+- Return type and parameter type inference from the method signature
+- Test runner with OPTION 0 (linked list), OPTION 1 (single param), OPTION 2 (multiple params)
+- Ensures the generated class is declared ``public``
+"""
+
 import re
 
 

@@ -1,3 +1,13 @@
+"""python_generator.py
+
+Generates a Python boilerplate solution file for a LeetCode problem.
+
+Handles:
+- Typing imports detection from the code snippet
+- ListNode uncomment + linked list builder function
+- Test runner with OPTION 0 (nodes), OPTION 1 (single input), OPTION 2 (multiple inputs)
+"""
+
 import re
 from html.parser import HTMLParser
 

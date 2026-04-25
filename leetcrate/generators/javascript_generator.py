@@ -1,3 +1,13 @@
+"""javascript_generator.py
+
+Generates a JavaScript (Node.js) boilerplate solution file for a LeetCode problem.
+
+Handles:
+- ListNode uncomment + buildLinkedList helper
+- Test runner wrapped in ``if (require.main === module)`` guard
+- OPTION 0 (linked list), OPTION 1 (single input), OPTION 2 (multiple inputs)
+"""
+
 import re
 
 

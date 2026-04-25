@@ -1,8 +1,17 @@
+"""utils.py
+
+Utility classes used by the generators.
+
+- :class:`TestCaseGenerator`: Parses problem constraints and generates
+  additional edge-case test inputs. Currently marked as broken/WIP.
+- :class:`SourceControlGenerator`: Generates a formatted commit message
+  template to append to each solution file.
+"""
+
 import re
 import random
 
 class TestCaseGenerator:
-    #! BROKEN
 
     def parse_constraints(self, description_text):
         """
@@ -321,18 +330,34 @@ class TestCaseGenerator:
         # Format for LeetCode
         leetcode_format = generator.format_testcases_for_leetcode(all_cases)
         
-        #! BROKEN - generates wrong comments + does not generate unique test cases. 
-        # TODO generates wrong comments
-        # TODO does not generate unique test cases. 
-        
-        # # Build comment block
-        # comment = "\n\n'''\n(NEW) TESTCASES:\n"
-        # comment += submission_format
-        # comment += "\n\nFOR LEETCODE:\n"
-        # comment += leetcode_format
-        # comment += "'''\n"
-        # return comment
-        return ""
+        seen = set()
+        unique_additional: list = []
+        for case in additional:
+            key = repr(case)
+            if key not in seen and key not in {repr(c) for c in original_cases}:
+                seen.add(key)
+                unique_additional.append(case)
+
+        if not unique_additional:
+            return ""
+
+        all_cases = original_cases + unique_additional
+        submission_format = generator.format_testcases_for_submission(all_cases, language)
+        leetcode_format = generator.format_testcases_for_leetcode(all_cases)
+
+        if language in ['cpp', 'c++', 'java', 'go', 'javascript', 'js']:
+            open_q = "/*"
+            close_q = "*/"
+        else:
+            open_q = '"""'
+            close_q = '"""'
+
+        comment = f"\n\n{open_q}\n(NEW) TESTCASES:\n"
+        comment += submission_format
+        comment += "\n\nFOR LEETCODE:\n"
+        comment += leetcode_format
+        comment += f"{close_q}\n"
+        return comment
 
 class SourceControlGenerator:
     @staticmethod

@@ -1,15 +1,21 @@
+"""core.py
+
+Core logic for fetching LeetCode problems via the GraphQL API and
+writing the generated template files to disk.
+"""
+
 import os
 import re
-import sys
 import json
 import requests
 from html.parser import HTMLParser
 
-from generators import GENERATOR_MAP
-from generators.utils import TestCaseGenerator, SourceControlGenerator
+from .config import get_vscode_settings
+from .generators import GENERATOR_MAP
+from .generators.utils import TestCaseGenerator, SourceControlGenerator
+
 
 class HTMLFilter(HTMLParser):
-    """Remove HTML tags from description."""
 
     def __init__(self):
         super().__init__()
@@ -32,8 +38,15 @@ class HTMLFilter(HTMLParser):
         return ''.join(self.text)
 
 
-def clean_html(html_text):
-    """Remove HTML tags from description and format nicely."""
+def clean_html(html_text: str) -> str:
+    """Strip HTML tags from a LeetCode problem description and reformat it as plain text.
+
+    Args:
+        html_text: Raw HTML string from the LeetCode API.
+
+    Returns:
+        A plain-text, line-wrapped string suitable for writing to a ``.txt`` file.
+    """
     parser = HTMLFilter()
     parser.feed(html_text or '')
     text = parser.get_text().strip()
@@ -43,12 +56,12 @@ def clean_html(html_text):
     in_example = False
     in_constraints = False
 
-    def wrap_text(source, width=100, indent_level=0):
+    def wrap_text(source: str, width: int = 100, indent_level: int = 0) -> list[str]:
         if not source.strip():
             return ['']
 
         words = source.split()
-        wrapped_lines = []
+        wrapped_lines: list[str] = []
         current_line = ''
         indent = '    ' * indent_level
 
@@ -101,7 +114,7 @@ def clean_html(html_text):
             wrapped = wrap_text(line, indent_level=0)
             formatted_lines.extend(wrapped)
 
-    final_lines = []
+    final_lines: list[str] = []
     empty_count = 0
 
     for line in formatted_lines:
@@ -116,97 +129,18 @@ def clean_html(html_text):
     return '\n'.join(final_lines)
 
 
-def read_settings():
-    """Read preferred language from settings.INI file."""
-    settings = {'language': 'python'}
-    settings_path = 'settings.INI'
+def fetch_leetcode_problem(problem_slug: str, preferred_language: str = 'python') -> dict | None:
+    """Fetch problem data from the LeetCode GraphQL API.
 
-    if not os.path.exists(settings_path):
-        return settings
+    Args:
+        problem_slug: The URL slug of the problem, e.g. ``two-sum``.
+        preferred_language: Language to fetch the code snippet for.
+            One of: ``python``, ``java``, ``javascript``, ``go``, ``cpp``.
 
-    try:
-        try:
-            with open(settings_path, 'r', encoding='utf-8-sig') as handle:
-                content = handle.read()
-        except UnicodeDecodeError:
-            with open(settings_path, 'r', encoding='utf-16') as handle:
-                content = handle.read()
-
-        for line in content.split('\n'):
-            line = line.strip()
-            if not line or line.startswith('#') or '=' not in line:
-                continue
-
-            key, value = line.split('=', 1)
-            key = key.strip().lower()
-            value = value.strip()
-
-            if key == 'language':
-                lang_value = value.lower()
-                if lang_value == 'c++':
-                    lang_value = 'cpp'
-                settings['language'] = lang_value
-    except Exception as exc:  # pylint: disable=broad-except
-        print(f"Warning: Could not read settings.INI: {exc}")
-        print("Using default language: python")
-
-    return settings
-
-
-def get_vscode_settings():
-    """Get VS Code indentation settings."""
-    defaults = {
-        'insert_spaces': True,
-        'tab_size': 4,
-        'indent_string': '    ',
-    }
-
-    workspace_settings_path = os.path.join('.vscode', 'settings.json')
-    user_settings_path = os.path.expanduser('~/AppData/Roaming/Code/User/settings.json')
-
-    def read_settings_file(path):
-        if not os.path.exists(path):
-            return {}
-        try:
-            with open(path, 'r', encoding='utf-8') as handle:
-                raw = handle.read()
-        except (OSError, UnicodeDecodeError):
-            return {}
-
-        filtered = []
-        for line in raw.split('\n'):
-            if '//' in line:
-                line = line.split('//', 1)[0]
-            filtered.append(line)
-        try:
-            return json.loads('\n'.join(filtered))
-        except json.JSONDecodeError:
-            return {}
-
-    user_settings = read_settings_file(user_settings_path)
-    workspace_settings = read_settings_file(workspace_settings_path)
-
-    merged = user_settings.copy()
-    merged.update(workspace_settings)
-
-    insert_spaces = merged.get('editor.insertSpaces', defaults['insert_spaces'])
-    tab_size = merged.get('editor.tabSize', defaults['tab_size'])
-
-    python_section = merged.get('[python]', {})
-    insert_spaces = python_section.get('editor.insertSpaces', insert_spaces)
-    tab_size = python_section.get('editor.tabSize', tab_size)
-
-    indent_string = (' ' * tab_size) if insert_spaces else '\t'
-
-    return {
-        'insert_spaces': insert_spaces,
-        'tab_size': tab_size,
-        'indent_string': indent_string,
-    }
-
-
-def fetch_leetcode_problem(problem_slug, preferred_language='python'):
-    """Fetch problem data using LeetCode's GraphQL API."""
+    Returns:
+        A dict containing the problem metadata and code snippet, or
+        ``None`` if the request fails or the problem is not found.
+    """
     language_map = {
         'python': 'Python3',
         'java': 'Java',
@@ -247,7 +181,12 @@ def fetch_leetcode_problem(problem_slug, preferred_language='python'):
     }
 
     try:
-        response = requests.post(url, json={'query': query, 'variables': variables}, headers=headers, timeout=20)
+        response = requests.post(
+            url,
+            json={'query': query, 'variables': variables},
+            headers=headers,
+            timeout=20,
+        )
         response.raise_for_status()
         data = response.json()
     except requests.RequestException as exc:
@@ -280,7 +219,7 @@ def fetch_leetcode_problem(problem_slug, preferred_language='python'):
         target_code = re.sub(r'\bTuple\[', 'tuple[', target_code)
 
     function_name = 'solve'
-    params = []
+    params: list[str] = []
 
     if preferred_language.lower() == 'python':
         func_match = re.search(r'def\s+(?!__init__)(\w+)\s*\(self(?:,\s*(.+?))?\)\s*->', target_code, re.DOTALL)
@@ -331,8 +270,8 @@ def fetch_leetcode_problem(problem_slug, preferred_language='python'):
                     if len(parts) >= 2:
                         params.append(parts[0])
 
-    test_cases = question.get('exampleTestcases')
-    test_cases = test_cases.split('\n') if test_cases else []
+    test_cases_raw = question.get('exampleTestcases')
+    test_cases = test_cases_raw.split('\n') if test_cases_raw else []
 
     return {
         'number': question.get('questionFrontendId'),
@@ -348,8 +287,18 @@ def fetch_leetcode_problem(problem_slug, preferred_language='python'):
     }
 
 
-def create_files(data):
-    """Create folder structure and files with API data."""
+def create_files(data: dict) -> str:
+    """Generate the folder structure and template files for a problem.
+
+    Creates ``problems/incomplete/<folder>/`` in the current working directory,
+    containing a ``description.txt`` and a language-specific solution file.
+
+    Args:
+        data: Problem data dict as returned by :func:`fetch_leetcode_problem`.
+
+    Returns:
+        The path to the created problem folder.
+    """
     vscode_settings = get_vscode_settings()
     indent = vscode_settings['indent_string']
 
@@ -376,7 +325,6 @@ def create_files(data):
     )
 
     folder_name = data['title'].replace(' ', '_').replace('.', '')
-
     title_without_number = re.sub(r'^\d+\s*\.?\s*', '', data['title'])
     file_name = title_without_number.replace(' ', '_').lower() + file_extension
 
@@ -404,12 +352,10 @@ def create_files(data):
 
     code_path = os.path.join(base_path, file_name)
     code_content = generator(data, indent)
-    
-    # Generate additional test cases comment
+
     testcase_comment = TestCaseGenerator.generate_testcase_comment(data, data['description'])
     code_content += testcase_comment
-    
-    # Generate GitHub push comment template
+
     github_comment = SourceControlGenerator.generate_github_push_comment(data)
     code_content += github_comment
 
@@ -427,30 +373,3 @@ def create_files(data):
     print(f"Parameters: {', '.join(data['params'])}")
 
     return base_path
-
-
-if __name__ == '__main__':
-    settings = read_settings()
-    preferred_language = settings['language']
-
-    print(f"Using preferred language: {preferred_language}")
-
-    if len(sys.argv) < 2:
-        url_or_slug = input('Enter LeetCode problem URL or slug: ')
-    else:
-        url_or_slug = sys.argv[1]
-
-    if 'leetcode.com' in url_or_slug:
-        slug_match = re.search(r'/problems/([^/]+)', url_or_slug)
-        problem_slug = slug_match.group(1) if slug_match else url_or_slug
-    else:
-        problem_slug = url_or_slug
-
-    print(f"Fetching problem: {problem_slug}...")
-    data = fetch_leetcode_problem(problem_slug, preferred_language)
-
-    if data:
-        base_path = create_files(data)
-        print(f"\nFolder succsessfully generated!\n    Folder is located at: {base_path}\n")
-    else:
-        print('Failed to fetch problem data')

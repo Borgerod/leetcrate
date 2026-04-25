@@ -1,5 +1,5 @@
 [bumpver]
-current_version = "0.2.0"
+current_version = "1.0.0"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit = false
 tag = false
@@ -8,20 +8,27 @@ tag = false
 "pyproject.toml" = [
 	'version = "{version}"'
 ]
-"generators/__init__.py" = [
+"leetcrate/generators/__init__.py" = [
 	'__version__ = "{version}"'
 ]
-"__init__.py" = [
+"leetcrate/__init__.py" = [
 	'__version__ = "{version}"'
 ]
+"bumpver.toml" = [
+	'current_version = "{version}"'
+]
+
+
 
 
 # usage:
-
-# 0.x.0:
-# bumpver update --patch
+#before that updateing, run:
+#.venv\Scripts\activate
 
 # 0.0.x:
+# bumpver update --patch
+
+# 0.x.0:
 # bumpver update --minor
 
 # x.0.0:

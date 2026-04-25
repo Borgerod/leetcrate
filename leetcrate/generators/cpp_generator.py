@@ -1,3 +1,14 @@
+"""cpp_generator.py
+
+Generates a C++ boilerplate solution file for a LeetCode problem.
+
+Handles:
+- ListNode struct + buildLinkedList helper injection
+- Return type and parameter type inference
+- Test runner in ``main()`` covering linked list, single param, and multi-param problems
+- Vector/tuple test case construction with truncated print helpers
+"""
+
 import re
 
 

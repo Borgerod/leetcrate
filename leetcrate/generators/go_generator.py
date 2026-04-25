@@ -1,3 +1,14 @@
+"""go_generator.py
+
+Generates a Go boilerplate solution file for a LeetCode problem.
+
+Handles:
+- ListNode struct + buildLinkedList helper injection
+- Go type inference from the function signature for type assertions
+- Test runner in ``main()`` with OPTION 0 (linked list), OPTION 1 (single input), OPTION 2 (multiple inputs)
+- Flat and nested array literal formatting (``[]int{}``, ``[][]int{}``)
+"""
+
 import re
 
 
