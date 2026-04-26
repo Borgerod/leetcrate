@@ -13,13 +13,12 @@ language-specific boilerplate solution files with runnable test harnesses.
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
     - [From PyPI](#from-pypi)
-    - [From source (editable install)](#from-source-editable-install)
-    - [Verify](#verify)
   - [Configuration](#configuration)
   - [Usage](#usage)
     - [`init`](#init)
     - [`generate`](#generate)
     - [`update`](#update)
+    - [commands overview / all commands](#commands-overview--all-commands)
   - [Folder Structure](#folder-structure)
   - [Generated File Format](#generated-file-format)
   - [Language Notes](#language-notes)
@@ -28,6 +27,7 @@ language-specific boilerplate solution files with runnable test harnesses.
     - [`tests/run_test.py`](#testsrun_testpy)
   - [Troubleshooting](#troubleshooting)
   - [TODO:](#todo)
+    - [_\[ plans for 1.0 -\> 2.0 \]_](#-plans-for-10---20-)
 
 ---
 
@@ -56,19 +56,19 @@ language-specific boilerplate solution files with runnable test harnesses.
 pip install leetcrate
 ```
 
-### From source (editable install)
+<!-- ### From source (editable install)
 
 ```powershell
 git clone https://github.com/Borgerod/leetcrate.git
 cd leetcrate
 pip install -e .
-```
-
+``` -->
+<!--
 ### Verify
 
 ```powershell
 leetcrate --version
-```
+``` -->
 
 ---
 
@@ -78,9 +78,11 @@ Run `leetcrate init` in your workspace directory to create a `settings.INI`:
 
 ```ini
 [LeetCode Problem Generator]
+; Pick from [python, cpp, java, javascript, go]
 language = python
 
 [Framework]
+; set these to true and run 'leetcrate update' to add other folders to your repo after the fact.
 contests = false
 courses  = false
 interview = false
@@ -110,8 +112,13 @@ First-time setup. Creates the workspace framework and `settings.INI`.
 leetcrate init
 ```
 
-You will be prompted to choose a full framework or a minimal install, and
-optionally enable the `contests`, `courses`, and `interview` folders.
+You will be prompted to choose a full framework or a minimal install;
+<br> &emsp; 1. minimal install &nbsp; -> For when you already have a file system and only want to use the package.
+<br> &emsp; 2. framework &emsp;&emsp; -> For when you are starting fresh, installs the package and creates framework;
+<br> &emsp; &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp; optionally enable the `contests`, `courses`, and `interview` folders.
+
+<!-- You will be prompted to choose a full framework or a minimal install, and
+optionally enable the `contests`, `courses`, and `interview` folders. -->
 
 ---
 
@@ -148,6 +155,34 @@ present on disk.
 
 ```powershell
 leetcrate update
+```
+
+---
+
+### commands overview / all commands
+
+<!-- ```powershell
+# tool commands
+leetcrate init                             # framework setup
+leetcrate update                           # updates framework based on setttings.ini
+leetcrate generate _some_leetcode_slug_    # creates template code in ./problems/incomplete
+
+# Basic commands
+leetcrate --version                        # verify version
+leetcrate --update                         # updates leetcrate version
+leetcrate --help                           # get tool commands
+``` -->
+
+```powershell
+# tool commands
+leetcrate init
+leetcrate update
+leetcrate generate _some_leetcode_slug_
+
+# Basic commands
+leetcrate --version
+leetcrate --update
+leetcrate --help
 ```
 
 ---
@@ -288,3 +323,100 @@ Runtime requirements per language:
   - [x] (Optional) Add tests/ directory
   - [ ] (Optional) Set up CI
   - [x] (Optional) Publish to PyPI
+
+### _[ plans for 1.0 -> 2.0 ]_
+
+- [ ] Add Migration tool - _for when users already have a repo for thier leetcode solutions and want to migrate them into the dataframe_
+  - [ ] add command; "leetcrate migrate _Path_To_Solutions_"
+  - [ ] default - assuming the user's _Path_To_Solutions_ is a regular folder; <details>
+        <summary>Section Title</summary>
+
+                Content inside the expandable section goes here.
+                ```
+                ./_Path_To_Solutions_/
+                    ├── _leetcode_solution_1_
+                    ├── _leetcode_solution_2_
+                    ├── _leetcode_solution_3_
+                    .
+                    .
+                    .
+                    └──_leetcode_solution_n_
+                ```
+        </details>
+
+  - [ ] variant - For when the user's repo has a more complex file structure - add a parser that takes a _structure_description_ as a param, then let the user describe the structure somewhere. <details>
+        <summary>Section Title</summary>
+
+                Content inside the expandable section goes here.
+                ```
+                ./_Path_To_Solutions_/
+                    ├── _leetcode_solution_1_
+                    ├── _leetcode_solution_2_
+                    ├── _leetcode_solution_3_
+                    .
+                    .
+                    .
+                    └──_leetcode_solution_n_
+                    ├── problems/
+                    │   ├── completed/
+                    │   └── incomplete/
+                [OPTIONAL]
+                    ├── contests/
+                    │   ├── bi_weekly/
+                    │   └── weekly/
+                    ├── courses/
+                    └── interview/
+                        ├── mock_assessment/
+                        └── online_interview/
+                            └── [Name of workplace]/
+                ```
+        </details>
+
+  - [ ] options:
+  1.  (safe but easy)Parse + iterates _solution_files_ then; generates templates based on them. <details>
+      <summary> read more.. </summary> 1. This will require either that, the user _solution_files_ provides something uniqe and recognizable.
+      <br> &emsp;&emsp; a. the _solution_file_ has the slug in its name,
+      <br> &emsp;&emsp; b. the proper name function name in side of it i.e.: "... def twoSum...", ,
+      <br> &emsp;&emsp; c. the user simply adds a list of solutions, but that sort of ruins the purpose.<br>
+      2. The migration tool will then essentially run "leetcrate generate _slug_" for each _solution_file_.<br>
+      3. Then the user will have to manually replace the templates with their own code,
+         which is safer but more laborous for the user.<br><br>
+
+      </details>
+
+  2.  (less safe but proper) Parse + iterates _solution_files_ then; automatically integrate content to template. <details>
+      <summary> read more.. </summary>
+      will generate template from it (require recognizable naming),
+      <br>
+      then make a copy _solution_files_ (for saftey),
+      <br>
+      then insert its content into the generated tempalte.
+      <br><br>
+      ! might need a rollback failsafe since this could be destructive depending on how i make it, or issue a warning to make sure the user is backed up before continuing.
+      </details>
+
+  <!-- - [ ] add DevOps tools: -->
+  <!-- - [ ] add CI/CD tools: -->
+
+- [ ] Add VCS tools:
+  - [ ] Add command - marking _solution_file_ as solved -> move to ./completed
+  - [ ] Add command - pushing completed file to repo w/ generated commit message
+  - [ ] Add command - pushing incomplete file to repo w/ generated commit message
+- [ ] Add more languages
+  - [ ] [1.1]
+    - [ ] Typescript
+    - [ ] C#
+    - [ ] C \*_gulp_\*
+    - [ ] Rust \*_gulp_\*
+  - [ ] [1.2]
+    - [ ] Kotlin
+    - [ ] Swift
+    - [ ] Dart
+    - [ ] PHP
+  - [ ] [1.3]
+    - [ ] Ruby
+    - [ ] Racket
+    - [ ] Scala
+    - [ ] Erlang
+    - [ ] Elixir
+- [ ] Make compatible for other package-types; npm, NuGet, Apache Maven, etc [ _MAYBE_ ]
