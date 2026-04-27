@@ -326,6 +326,8 @@ Runtime requirements per language:
 
 ### _[ plans for 1.0 -> 2.0 ]_
 
+- [ ] Add checker that checks /completed and /incomplete if you already have done it.
+      if so you should get the prompt to; 'abort' (default), 'replace', or 'create-variant' (/1_two_sum[2])
 - [ ] Add Migration tool - _for when users already have a repo for thier leetcode solutions and want to migrate them into the dataframe_
   - [ ] add command; "leetcrate migrate _Path_To_Solutions_"
   - [ ] default - assuming the user's _Path_To_Solutions_ is a regular folder; <details>
@@ -378,8 +380,8 @@ Runtime requirements per language:
       <br> &emsp;&emsp; a. the _solution_file_ has the slug in its name,
       <br> &emsp;&emsp; b. the proper name function name in side of it i.e.: "... def twoSum...", ,
       <br> &emsp;&emsp; c. the user simply adds a list of solutions, but that sort of ruins the purpose.<br>
-      2. The migration tool will then essentially run "leetcrate generate _slug_" for each _solution_file_.<br>
-      3. Then the user will have to manually replace the templates with their own code,
+      1. The migration tool will then essentially run "leetcrate generate _slug_" for each _solution_file_.<br>
+      2. Then the user will have to manually replace the templates with their own code,
          which is safer but more laborous for the user.<br><br>
 
       </details>
