@@ -413,9 +413,6 @@ Runtime requirements per language:
       ! might need a rollback failsafe since this could be destructive depending on how i make it, or issue a warning to make sure the user is backed up before continuing.
       </details>
 
-  <!-- - [ ] add DevOps tools: -->
-  <!-- - [ ] add CI/CD tools: -->
-
 - [ ] Add VCS tools:
   - [x] Add command - marking _solution_folder_ as solved -> move to ./completed
   - [ ] Add command - pushing completed file to repo w/ generated commit message
