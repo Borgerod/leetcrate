@@ -67,11 +67,13 @@ actions update major --release
 ### build + release without pushing
 
     ```cmd
+
     python -m pip install --upgrade build
     python -m build
     git push --follow-tags
-    gh release create v1.2.0 --title "v1.2.0" --notes "Automated release"
-    for /f %K in ("keys\pypi.txt") do set PYPI_TOKEN=%K
+    gh release create v$(bumpver show current-version) --title "v$(bumpver show current-version)" --notes "Automated release"
+    set /p PYPI_TOKEN=<keys\pypi.txt
     python -m pip install --upgrade twine
-    twine upload dist/* -u __token__ -p %PYPI_TOKEN%
+    twine upload dist/\* -u **token** -p %PYPI_TOKEN%
     ```
+    NOTE: if you get errors make sure that the builds in dist are not bugged
