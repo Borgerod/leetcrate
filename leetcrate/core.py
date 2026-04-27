@@ -373,3 +373,117 @@ def create_files(data: dict) -> str:
     print(f"Parameters: {', '.join(data['params'])}")
 
     return base_path
+
+
+def _convert_slug_to_folder_name(slug: str) -> str:
+    """Convert kebab-case slug to folder name format."""
+    parts = slug.split('-')
+    if parts[0].isdigit():
+        number = parts[0]
+        name = ' '.join(p.capitalize() for p in parts[1:])
+        return f"{number}_{name}"
+    name = ' '.join(p.capitalize() for p in parts)
+    return name.replace(' ', '_')
+
+
+def _find_problem_folder(slug: str) -> tuple[str, str] | None:
+    """Find problem folder by slug in completed or incomplete directories.
+    
+    Returns:
+        Tuple of (folder_path, location) where location is 'completed' or 'incomplete', 
+        or None if not found.
+    """
+    folder_name = _convert_slug_to_folder_name(slug)
+    
+    for location in ['completed', 'incomplete']:
+        base_path = os.path.join('problems', location)
+        folder_path = os.path.join(base_path, folder_name)
+        if os.path.isdir(folder_path):
+            return (folder_path, location)
+    
+    return None
+
+
+def _parse_description_file(desc_path: str) -> dict[str, str]:
+    """Parse description.txt to extract metadata.
+    
+    Returns:
+        Dictionary with keys: 'name', 'difficulty', 'topics'
+    """
+    metadata = {'name': '', 'difficulty': '', 'topics': ''}
+    
+    try:
+        with open(desc_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith('difficulty:'):
+                    metadata['difficulty'] = line.replace('difficulty:', '').strip()
+                elif line.startswith('topics:'):
+                    metadata['topics'] = line.replace('topics:', '').strip()
+                elif metadata['name'] == '' and line and not line.startswith('_'):
+                    name_match = re.match(r'^(\d+\.?\s+)?(.+?)(?:\s*_+)?$', line)
+                    if name_match:
+                        metadata['name'] = name_match.group(2).strip()
+    except FileNotFoundError:
+        pass
+    
+    return metadata
+
+
+def _generate_commit_message(problem_name: str, difficulty: str, topics: str, location: str) -> str:
+    """Generate commit message based on problem metadata and location."""
+    if location == 'completed':
+        template = f"Finish {problem_name} (/completed)\n  contains: description, solution.\n  difficulty: {difficulty}\n  topics: {topics}"
+    else:
+        template = f"Create {problem_name} (/incomplete)\n  contains: description, solution.\n  difficulty: {difficulty}\n  topics: {topics}"
+    
+    return template
+
+
+def commit_problem(slug: str) -> bool:
+    """Stage and commit a problem folder.
+    
+    Args:
+        slug: Problem slug (e.g., 'two-sum')
+        
+    Returns:
+        True if successful, False otherwise.
+    """
+    import subprocess
+    
+    result = _find_problem_folder(slug)
+    if not result:
+        print(f"Error: Problem '{slug}' not found in completed or incomplete folders.")
+        return False
+    
+    folder_path, location = result
+    desc_path = os.path.join(folder_path, 'description.txt')
+    
+    if not os.path.exists(desc_path):
+        print(f"Error: description.txt not found in {folder_path}")
+        return False
+    
+    metadata = _parse_description_file(desc_path)
+    problem_name = metadata['name']
+    difficulty = metadata['difficulty']
+    topics = metadata['topics']
+    
+    if not problem_name:
+        print(f"Error: Could not extract problem name from {desc_path}")
+        return False
+    
+    commit_msg = _generate_commit_message(problem_name, difficulty, topics, location)
+    
+    try:
+        subprocess.run(['git', 'add', folder_path], check=True, capture_output=True)
+        subprocess.run(['git', 'commit', '-m', commit_msg], check=True, capture_output=True)
+        print(f"✓ Committed {problem_name}")
+        print(f"  Location: {location}")
+        print(f"  Message: {commit_msg.split(chr(10))[0]}")
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Error: Git command failed - {e.stderr.decode() if e.stderr else str(e)}")
+        return False
+    except FileNotFoundError:
+        print("Error: Git command not found. Make sure git is installed and in PATH.")
+        return False

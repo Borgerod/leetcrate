@@ -18,7 +18,7 @@ from importlib.resources import files as pkg_files
 
 from . import __version__
 from .config import read_settings
-from .core import fetch_leetcode_problem, create_files
+from .core import fetch_leetcode_problem, create_files, commit_problem
 from .framework import create_framework, update_framework
 
 
@@ -81,6 +81,13 @@ def _cmd_generate(args: argparse.Namespace) -> None:
         print('Failed to fetch problem data')
 
 
+def _cmd_commit(args: argparse.Namespace) -> None:
+    slug: str = args.slug or input('Enter problem slug (e.g., two-sum): ')
+    success = commit_problem(slug)
+    if not success:
+        exit(1)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog='leetcrate',
@@ -106,6 +113,12 @@ def main() -> None:
     )
     generate_parser.add_argument('slug', nargs='?', help='LeetCode problem slug or URL')
 
+    commit_parser = subparsers.add_parser(
+        'commit',
+        help='Stage and commit a problem folder with auto-generated message',
+    )
+    commit_parser.add_argument('slug', nargs='?', help='Problem slug (e.g., two-sum)')
+
     args = parser.parse_args()
 
     if args.command == 'init':
@@ -114,5 +127,7 @@ def main() -> None:
         _cmd_update(args)
     elif args.command in ('generate', 'gen', 'get', 'create'):
         _cmd_generate(args)
+    elif args.command == 'commit':
+        _cmd_commit(args)
     else:
         parser.print_help()
