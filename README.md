@@ -16,7 +16,7 @@ language-specific boilerplate solution files with runnable test harnesses.
   - [Configuration](#configuration)
   - [Usage](#usage)
     - [`init`](#init)
-    - [`generate`](#generate)
+    - [`generate` | `gen` | `get` | `create`](#generate--gen--get--create)
     - [`update`](#update)
     - [commands overview / all commands](#commands-overview--all-commands)
   - [Folder Structure](#folder-structure)
@@ -122,7 +122,7 @@ optionally enable the `contests`, `courses`, and `interview` folders. -->
 
 ---
 
-### `generate`
+### `generate` | `gen` | `get` | `create`
 
 Fetch a problem and write template files.
 
@@ -132,6 +132,16 @@ leetcrate generate two-sum
 leetcrate generate https://leetcode.com/problems/two-sum/
 # omit the slug to be prompted interactively:
 leetcrate generate
+```
+
+or you can use the alternatives; `gen`|`get`|`create`
+
+```powershell
+leetcrate `gen`|`get`|`create` two-sum
+# or pass the full URL:
+leetcrate `gen`|`get`|`create` https://leetcode.com/problems/two-sum/
+# omit the slug to be prompted interactively:
+leetcrate `gen`|`get`|`create`
 ```
 
 What happens:
@@ -178,6 +188,11 @@ leetcrate --help                           # get tool commands
 leetcrate init
 leetcrate update
 leetcrate generate _some_leetcode_slug_
+# or
+leetcrate gen _some_leetcode_slug_
+leetcrate get _some_leetcode_slug_
+leetcrate create _some_leetcode_slug_
+
 
 # Basic commands
 leetcrate --version
@@ -251,7 +266,7 @@ Both scripts live in `tests/` and are intended for local development only.
 
 ### `tests/generator_test.py`
 
-Bulk-generates a hardcoded list of problems using `leetcrate generate`.
+Bulk-generates a hardcoded list of problems using `leetcrate generate` or `leetcrate gen`.
 Edit the `slugs` list inside the file to change which problems are scaffolded.
 
 ```powershell
@@ -326,6 +341,7 @@ Runtime requirements per language:
 
 ### _[ plans for 1.0 -> 2.0 ]_
 
+- [x] add abbreviation of command "generate" -> "gen" (also added some additional alternatives)
 - [ ] Add checker that checks /completed and /incomplete if you already have done it.
       if so you should get the prompt to; 'abort' (default), 'replace', or 'create-variant' (/1_two_sum[2])
 - [ ] Add Migration tool - _for when users already have a repo for thier leetcode solutions and want to migrate them into the dataframe_
@@ -401,9 +417,10 @@ Runtime requirements per language:
   <!-- - [ ] add CI/CD tools: -->
 
 - [ ] Add VCS tools:
-  - [ ] Add command - marking _solution_file_ as solved -> move to ./completed
+  - [x] Add command - marking _solution_folder_ as solved -> move to ./completed
   - [ ] Add command - pushing completed file to repo w/ generated commit message
   - [ ] Add command - pushing incomplete file to repo w/ generated commit message
+  - [ ] Add command - commit _slug_ - commits _solution_folder_ to repo w/ generated commit message, based on its location. (/completed, /incomplete)
 - [ ] Add more languages
   - [ ] [1.1]
     - [ ] Typescript
