@@ -13,7 +13,7 @@ Supported languages: ``python``, ``java``, ``javascript``, ``go``, ``cpp``.
 """
 
 # version for runtime access
-__version__ = "1.2.0"
+__version__ = "1.2.1"
 from .python_generator import generate_boilerplate as generate_python
 from .java_generator import generate_boilerplate as generate_java
 from .javascript_generator import generate_boilerplate as generate_javascript

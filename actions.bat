@@ -20,6 +20,10 @@ if "%2"=="patch" (
     if "%3"=="--release" (
         for /f %%V in ('bumpver show current-version --no-fetch') do set VERSION=%%V
         gh release create v%VERSION% --title "v%VERSION%" --notes "Automated release"
+            REM Upload to PyPI
+            for /f %%K in ("keys\pypi.txt") do set PYPI_TOKEN=%%K
+            python -m pip install --upgrade twine
+            twine upload dist/* -u __token__ -p %PYPI_TOKEN%
     )
     goto :eof
 )
@@ -34,6 +38,10 @@ if "%2"=="minor" (
     if "%3"=="--release" (
         for /f %%V in ('bumpver show current-version --no-fetch') do set VERSION=%%V
         gh release create v%VERSION% --title "v%VERSION%" --notes "Automated release"
+            REM Upload to PyPI
+            for /f %%K in ("keys\pypi.txt") do set PYPI_TOKEN=%%K
+            python -m pip install --upgrade twine
+            twine upload dist/* -u __token__ -p %PYPI_TOKEN%
     )
     goto :eof
 )
@@ -48,6 +56,10 @@ if "%2"=="major" (
     if "%3"=="--release" (
         for /f %%V in ('bumpver show current-version --no-fetch') do set VERSION=%%V
         gh release create v%VERSION% --title "v%VERSION%" --notes "Automated release"
+            REM Upload to PyPI
+            for /f %%K in ("keys\pypi.txt") do set PYPI_TOKEN=%%K
+            python -m pip install --upgrade twine
+            twine upload dist/* -u __token__ -p %PYPI_TOKEN%
     )
     goto :eof
 )
@@ -76,12 +88,6 @@ REM ── Confirmation prompt ────────────────�
 echo.
 echo  Ready to push. Press ENTER to confirm or ESC to abort...
 call :read_key
-@REM if "%KEYPRESS%"=="ENTER" (
-@REM     echo  Pushing...
-@REM     exit /b 0
-@REM )
-@REM echo  Aborted.
-@REM exit /b 1
 if "%KEYPRESS%"=="ENTER" (
     echo  Pushing...
     exit /b 0

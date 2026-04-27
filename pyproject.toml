@@ -1,6 +1,6 @@
 [project]
 name = "leetcrate"
-version = "1.2.0"
+version = "1.2.1"
 description = "A tool to organize and generate LeetCode problems and solutions."
 readme = "README.md"
 requires-python = ">=3.9"

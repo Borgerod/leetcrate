@@ -25,9 +25,10 @@ major - will also build and release.
 ### commands:
 
 ```cmd
-action update patch
-action update minor --release
-action update major --release
+# nore: --release is optional
+actions update patch --release
+actions update minor --release
+actions update major --release
 ```
 
 ### patch
@@ -70,4 +71,7 @@ action update major --release
     python -m build
     git push --follow-tags
     gh release create v1.2.0 --title "v1.2.0" --notes "Automated release"
+    for /f %K in ("keys\pypi.txt") do set PYPI_TOKEN=%K
+    python -m pip install --upgrade twine
+    twine upload dist/* -u __token__ -p %PYPI_TOKEN%
     ```
