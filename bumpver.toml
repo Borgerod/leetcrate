@@ -1,8 +1,8 @@
 [bumpver]
 current_version = "1.0.0"
 version_pattern = "MAJOR.MINOR.PATCH"
-commit = false
-tag = false
+commit = true
+tag = true
 
 [bumpver.file_patterns]
 "pyproject.toml" = [
