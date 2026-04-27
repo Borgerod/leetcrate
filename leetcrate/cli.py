@@ -112,7 +112,7 @@ def main() -> None:
         _cmd_init(args)
     elif args.command == 'update':
         _cmd_update(args)
-    elif args.command == 'generate':
+    elif args.command in ('generate', 'gen', 'get', 'create'):
         _cmd_generate(args)
     else:
         parser.print_help()
